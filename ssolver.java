@@ -16,7 +16,7 @@ public class ssolver{
 		int [] [] puzzle = new int [9][9];
 		puzzle = readin();
 		printPuzzle(puzzle);
-		puzzle = solve(puzzle);
+		puzzle = solve(puzzle, 0, 0);
 		printPuzzle(puzzle);
 	}
 	
@@ -69,28 +69,41 @@ System.out.println("Beep");
 		
 		return puzzle;		
 	}
-	public static int[][] solve(int[][]puzzle){
-		for(int i = 0; i<9; i++){
-			for(int j = 0; j<9; j++){
-				if(puzzle[i][j]==0){
-				ArrayList<Integer> a = new ArrayList<Integer>();
-				int place = 0;
-					for(int k = 1; k<10; k++){
-						if(isTrue(puzzle, i, j, k)){
-							a.add(k);
-						}
-					}
-				System.out.println(a.toString());
-				if(a.size()==1){
-					puzzle[i][j] = a.get(0);
-					printPuzzle(puzzle);
-					solve(puzzle);
-				}
+	public static int[][] solve(int[][]puzzle, int x, int y){
+		//using backtracking for brute force power of the gods(norse cause they obviously most b.a.
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		//next for both x and y
+		int nextx, nexty;
+		if(x==8){
+			nextx=0;
+			nexty=y+1;
+		}
+		else{
+			nextx=x++;
+			nexty=y;
+		}
+		
+		if(puzzle[y][x] == 0){
+			for(int i =1; i<10; i++){
+				if(isTrue(puzzle, y, x, i))
+					list.add(i);
+			}	
+			for(int i : list){
+				puzzle[y][x] = i;
+				if(isSolved(puzzle)) break;
+				else{
+					solve(puzzle, nextx, nexty);
 				}
 			}
 		}
-		return puzzle;
-	}		
+		else{
+			if(isSolved(puzzle));
+			else{ 
+				solve(puzzle, nextx, nexty);
+			}
+		}	
+		return puzzle;				
+		}		
 						
 	//checks to see if an int possible in the puzzle at space [i][j] is acceptable
 	public static boolean isTrue(int [][]puzzle, int y, int x, int possible){
