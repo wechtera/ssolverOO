@@ -40,30 +40,30 @@ public class ssolver{
 
 	//reading in puzzle
 	public static int[][] readin(){
-		int[] [] puzzle = new int [9][9];	
+		int[] [] puzzle = new int [9][9];
+		BufferedReader reader = null;//trying to fix reader not found error may not work	
 		try{
-			BufferedReader reader = new BufferedReader(new FileReader("/Users/wechtera/Desktop/Practiceprogram/ssolverin.txt"));
+			reader = new BufferedReader(new FileReader("/Users/wechtera/Desktop/Practiceprograms/ssolverOO/ssolverin.txt"));
 		}catch(FileNotFoundException fnf){System.out.println("file not found skank");}
 			int input;  //input into the puzzle
-			String in;   //what we type into pre convert (. for blank space)
-System.out.println("Beep");
 			
 			for(int i = 0; i<9; i++){  //rows
 				System.out.println("\n______Row " + i + "_________\n");
 				for(int j = 0; j<9; j++){  //columns
 					System.out.print((i)+" x "+(j)+":  ");
 					try{
-						in = reader.readLine();
-					}catch(IOException e){}
-					in = in.substring(0, 1);
-					if(in.equals(".")){
-						System.out.println("caughtca");
-						input = 0;
+						String in = reader.readLine();
+						in = in.substring(0, 1);
+						if(in.equals(".")){
+							System.out.println("caughtca");
+							input = 0;
+						}
+						else{
+							input = Integer.parseInt(in);
+						}
+						puzzle[i][j]= input;
 					}
-					else{
-						input = Integer.parseInt(in);
-					}
-					puzzle[i][j]= input;
+					catch(IOException e){e.printStackTrace();}
 				}
 			}
 		
@@ -72,17 +72,17 @@ System.out.println("Beep");
 	public static int[][] solve(int[][]puzzle, int x, int y){
 		//using backtracking for brute force power of the gods(norse cause they obviously most b.a.
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		//next for both x and y
-		int nextx, nexty;
-		if(x==8){
+		//next for both  x and y
+		int nextx, nexty=y;
+		if(x == 8){
 			nextx=0;
 			nexty=y+1;
 		}
 		else{
 			nextx=x++;
-			nexty=y;
 		}
-		
+		if(isSolved(puzzle))
+			return puzzle;
 		if(puzzle[y][x] == 0){
 			for(int i =1; i<10; i++){
 				if(isTrue(puzzle, y, x, i))
@@ -90,17 +90,15 @@ System.out.println("Beep");
 			}	
 			for(int i : list){
 				puzzle[y][x] = i;
-				if(isSolved(puzzle)) break;
+				printPuzzle(puzzle);//prints here for testing 
+				if(isSolved(puzzle)||(x==8&&y==8)) break;
 				else{
 					solve(puzzle, nextx, nexty);
 				}
 			}
 		}
 		else{
-			if(isSolved(puzzle));
-			else{ 
 				solve(puzzle, nextx, nexty);
-			}
 		}	
 		return puzzle;				
 		}		
