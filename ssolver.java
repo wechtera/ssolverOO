@@ -1,17 +1,10 @@
-//Trying to create a sudoku solver using dfs
+//Trying to create a sudoku solver using backtracking
 import java.io.*;
 import java.io.BufferedReader;
-import java.util.Scanner;
 import java.io.FileReader;
 import java.util.ArrayList;
 public class ssolver{
 	public static void main(String [] args){
-		//So for notation we're gonna hve the cube look like this:
-		/*  _________________________
-		*   | A1 A2 A3 |A4 A5 A6 | ...
-		*   | B1 B2 B3 | .............
-		*   | C1 C2 C3 | ............
-		*/
 		//lets read it into a double array
 		int [] [] puzzle = new int [9][9];
 		puzzle = readin();
@@ -43,7 +36,7 @@ public class ssolver{
 		int[] [] puzzle = new int [9][9];
 		BufferedReader reader = null;//trying to fix reader not found error may not work	
 		try{
-			reader = new BufferedReader(new FileReader("/Users/wechtera/Desktop/Practiceprograms/ssolverOO/ssolverin.txt"));
+			reader = new BufferedReader(new FileReader("/Users/wechtera/Desktop/Practiceprograms/ssolverOO/ssolverin.txt"));//source file
 		}catch(FileNotFoundException fnf){System.out.println("file not found skank");}
 			int input;  //input into the puzzle
 			
@@ -74,6 +67,7 @@ public class ssolver{
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		//next for both  x and y
 		int nextx, nexty=y;
+		
 		if(x == 8){
 			nextx=0;
 			nexty=y+1;
@@ -81,25 +75,27 @@ public class ssolver{
 		else{
 			nextx=x++;
 		}
+		
 		if(isSolved(puzzle))
 			return puzzle;
-		if(puzzle[y][x] == 0){
+		
+		if(!(puzzle[y][x]==0))
+			solve(puzzle, nextx, nexty);
+		else{
 			for(int i =1; i<10; i++){
 				if(isTrue(puzzle, y, x, i))
 					list.add(i);
 			}	
 			for(int i : list){
-				puzzle[y][x] = i;
+				puzzle[y][x] = list.get(i);
 				printPuzzle(puzzle);//prints here for testing 
-				if(isSolved(puzzle)||(x==8&&y==8)) break;
+				if(isSolved(puzzle)||(x==8&&y==8));
 				else{
 					solve(puzzle, nextx, nexty);
 				}
 			}
 		}
-		else{
-				solve(puzzle, nextx, nexty);
-		}	
+
 		return puzzle;				
 		}		
 						
@@ -163,18 +159,6 @@ public class ssolver{
 		}
 		return false;
 	}
-	/* So my logic behind dealing with how to check only the box no matter what the entry was, was 
-	 * relatively pain in the ass since the logic is pretty long.  But while looking for commonalities t
-	 * that were repeatable in all of the boxxes, i decided to us the modulus operator.
-	           1   2   0
-		_____________
-	     1	|
-	     2	|
-	     0	|
-		-------------	
-	 * based on the sample base array no matter what they will be one of those three and i can use those coords of the 1,0, 
-	 * guide which coords to check against
-	 */
 	public static boolean checkBox(int[][]puzzle, int y, int x, int possible){
 		//ly/lx are modulus indicators	
 		int ly = y+1%3;
@@ -219,6 +203,4 @@ public class ssolver{
 		}
 		return true;
 	}
-		  
-			
 }
