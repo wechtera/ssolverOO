@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 public class ssolver{
+	private static int recDepth = 0;  //recursion depth
 	public static void main(String [] args){
 		//lets read it into a double array
 		int [] [] puzzle = new int [9][9];
@@ -63,6 +64,8 @@ public class ssolver{
 		return puzzle;		
 	}
 	public static int[][] solve(int[][]puzzle, int x, int y){
+		System.out.println("RecrDepth:  " + recDepth);
+		recDepth++;
 		//using backtracking for brute force power of the gods(norse cause they obviously most b.a.
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		//next for both  x and y
@@ -79,21 +82,25 @@ public class ssolver{
 		if(isSolved(puzzle))
 			return puzzle;
 		
-		if(!(puzzle[y][x]==0))
-			solve(puzzle, nextx, nexty);
-		else{
+		if(puzzle[y][x]==0){
 			for(int i =1; i<10; i++){
 				if(isTrue(puzzle, y, x, i))
 					list.add(i);
+				for(int j : list)
+					System.out.println("List:  "+ j);
 			}	
-			for(int i : list){
-				puzzle[y][x] = list.get(i);
+			for(int j : list){
+				puzzle[y][x] = list.get(j);
 				printPuzzle(puzzle);//prints here for testing 
 				if(isSolved(puzzle)||(x==8&&y==8));
 				else{
 					solve(puzzle, nextx, nexty);
 				}
 			}
+		}
+		else{	
+			printPuzzle(puzzle);
+			solve(puzzle, nextx, nexty);
 		}
 
 		return puzzle;				
