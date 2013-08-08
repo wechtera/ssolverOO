@@ -69,43 +69,44 @@ public class ssolver{
 		//using backtracking for brute force power of the gods(norse cause they obviously most b.a.
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		//next for both  x and y
-		int nextx, nexty=y;
+		int nextx = getNextx(x);
+		int nexty = getNexty(x, y);
 		
-		if(x == 8){
-			nextx=0;
-			nexty=y+1;
+		while(puzzle[y][x] != 0){  //progress until blank space
+			x = nextx;
+			y = nexty;
+			if(isSolved(puzzle))
+				return puzzle;
+			nextx = getNextx(x);
+			nexty = getNexty(x, y);
 		}
-		else{
-			nextx=x++;
+		for(int i = 1; i<10; i++){
+			if(isTrue(puzzle, y, x, i))
+				list.add(i);
 		}
-		
-		if(isSolved(puzzle))
-			return puzzle;
-		
-		if(puzzle[y][x]==0){
-			for(int i =1; i<10; i++){
-				if(isTrue(puzzle, y, x, i))
-					list.add(i);
-				for(int j : list)
-					System.out.println("List:  "+ j);
-			}	
-			for(int j : list){
-				puzzle[y][x] = list.get(j);
-				printPuzzle(puzzle);//prints here for testing 
-				if(isSolved(puzzle)||(x==8&&y==8));
-				else{
-					solve(puzzle, nextx, nexty);
-				}
-			}
-		}
-		else{	
+		for(int i=0; i<list.size(); i++){
+			puzzle[y][x]= list.get(i);
+			if(isSolved(puzzle))
+				return puzzle;
 			printPuzzle(puzzle);
-			solve(puzzle, nextx, nexty);
+			puzzle = solve(puzzle, nextx, nexty);
 		}
-
+		
 		return puzzle;				
-		}		
+	}		
 						
+	public static int getNextx(int x){
+		if(x==8)
+			return 0;
+		else
+			return x+1;
+	}
+	public static int getNexty(int x, int y){
+		if(x ==8)
+			return y+1;
+		else
+			return y;
+	}
 	//checks to see if an int possible in the puzzle at space [i][j] is acceptable
 	public static boolean isTrue(int [][]puzzle, int y, int x, int possible){
 		if(checkRow(puzzle, y, x, possible) || checkColumn(puzzle, y, x, possible) || checkBox(puzzle, y, x, possible))
