@@ -71,7 +71,6 @@ public class ssolver{
 		//next for both  x and y
 		int nextx = getNextx(x);
 		int nexty = getNexty(x, y);
-		
 		while(puzzle[y][x] != 0){  //progress until blank space
 			x = nextx;
 			y = nexty;
@@ -87,12 +86,11 @@ public class ssolver{
 		for(int i=0; i<list.size(); i++){
 			puzzle[y][x]= list.get(i);
 			if(isSolved(puzzle))
-				return puzzle;
+				return puzzle; 
 			printPuzzle(puzzle);
 			puzzle = solve(puzzle, nextx, nexty);
 		}
-		
-		return puzzle;				
+		return puzzle;
 	}		
 						
 	public static int getNextx(int x){
@@ -109,95 +107,37 @@ public class ssolver{
 	}
 	//checks to see if an int possible in the puzzle at space [i][j] is acceptable
 	public static boolean isTrue(int [][]puzzle, int y, int x, int possible){
-		if(checkRow(puzzle, y, x, possible) || checkColumn(puzzle, y, x, possible) || checkBox(puzzle, y, x, possible))
+		if(checkRow(puzzle, x, possible) || checkColumn(puzzle, y, possible) || checkBox(puzzle, y, x, possible))
 			return false;
 		else
 			return true;
 	}
 	//checking the row, if there is a conflict ie possible is found in row already, return true
-	public static boolean checkRow(int[][]puzzle, int y, int x, int possible){
-		int ph = x;
-		if(x == 0){
-			for(ph = 1; ph <9; ph++){
-				if(puzzle[y][ph] == possible)
-					return true;
-			}
-		}
-		else if(!(x==0) && !(x==8)){
-			for(ph = x-1; ph >-1; ph--){
-				if(puzzle[y][ph] == possible)
-					return true;
-			}
-			for(ph = x+1; ph < 9; ph++){
-				if(puzzle[y][ph] == possible)
-					return true;
-			}
-		}
-		else{ //x ==9
-			for(ph = x-1; ph>=0; ph--){
-				if(puzzle[y][ph] == possible)
-					return true;
-			}
+	public static boolean checkRow(int[][]puzzle, int x, int possible){
+		for(int i = 0; i<9; i++){
+			if(puzzle[i][x]	== possible)
+				return true;
 		}
 		return false;
-	}
-	public static boolean checkColumn(int[][]puzzle, int y, int x, int possible){
-		int ph = y;
-		if(y ==0){
-			for(ph = 1; ph< 9; ph++){
-				if(puzzle[ph][x] == possible)
-					return true;
-			}
-		}
-		else if(!(y==0) && !(y==9)){
-			for(ph = y-1; ph>-1; ph--){
-				if(puzzle[ph][x] == possible)
-					return true;
-			}
-			for(ph = y+1; ph <9; ph++){
-				if(puzzle[ph][x] == possible)
-					return true;
-			}
-		}
-		else{ //y == 9
-			for(ph = y-1; ph>=0; ph--){
-				if(puzzle[ph][x] == possible)
-					return true;
-			}
+ }
+	public static boolean checkColumn(int[][]puzzle, int y, int possible){
+		for(int i = 0; i<9; i++){
+			if(puzzle[y][i] == possible)
+				return true;
 		}
 		return false;
 	}
 	public static boolean checkBox(int[][]puzzle, int y, int x, int possible){
 		//ly/lx are modulus indicators	
-		int ly = y+1%3;
-		int lx = x+1%3;
-		boolean allow=  false;
-		int x1 =0, x2=0, y1=0, y2=0;  //for external cases
-		switch(lx){
-			case 0: x1 = x-1;
-				x2 = x-2;
-				break;
-			case 1: x1 = x+1;
-				x2 = x+2;
-				break;
-			case 2: x1 = x+1;
-				x2 = x-1;
-				break;
+		int row = (x/3)*3;
+		int column = (y/3)*3;
+
+		for(int i = 0; i<3; i++){
+			for(int j = 0; j<3; j++){
+				if(puzzle[column+i][row+j] == possible)
+					return true;
+			}
 		}
-		switch(ly){
-			case 0: y1 = y-1;
-				y2 = y-2;
-				break;
-			case 1: y1 = y+1;
-				y2 = y+2;
-				break;
-			case 2: y1 = y-1;
-				y2 = y+1;
-				break;
-		}
-		if( puzzle[y1][x1]==possible || puzzle[y1][x2]==possible || puzzle[y2][x1]==possible || puzzle[y2][x2]==possible )
-			return true;
-			
 		return false;
 	}
 	//check to see if puzzle is solved by checking all the boxes  a bit inefficient but balls cried the queen
