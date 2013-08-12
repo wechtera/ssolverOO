@@ -5,13 +5,15 @@ import java.io.FileReader;
 import java.util.ArrayList;
 public class ssolver{
 	private static int recDepth = 0;  //recursion depth
+	private static int [][] solution = new int [9][9];  //cheating around it exitting incorectly
 	public static void main(String [] args){
 		//lets read it into a double array
 		int [] [] puzzle = new int [9][9];
 		puzzle = readin();
 		printPuzzle(puzzle);
 		puzzle = solve(puzzle, 0, 0);
-		printPuzzle(puzzle);
+		System.out.println("========= SOLVED =============");
+		printPuzzle(solution);
 	}
 	
 	public static void printPuzzle(int[][]puzzle){
@@ -74,8 +76,11 @@ public class ssolver{
 		while(puzzle[y][x] != 0){  //progress until blank space
 			x = nextx;
 			y = nexty;
-			if(isSolved(puzzle))
+			if(isSolved(puzzle)){
+				System.out.println("resetting sollution improperly");
+				solution = puzzle;
 				return puzzle;
+			}
 			nextx = getNextx(x);
 			nexty = getNexty(x, y);
 		}
@@ -85,10 +90,14 @@ public class ssolver{
 		}
 		for(int i=0; i<list.size(); i++){
 			puzzle[y][x]= list.get(i);
-			if(isSolved(puzzle))
-				return puzzle; 
-			printPuzzle(puzzle);
+			if(isSolved(puzzle)){
+				System.out.println("Resetting Solution");
+				solution = puzzle;
+				return puzzle;
+			}
+			System.out.print("=");
 			puzzle = solve(puzzle, nextx, nexty);
+			puzzle[y][x] = 0;//clear spot upon backtracking THIS WAS WHAT I WAS MISSIN
 		}
 		return puzzle;
 	}		
@@ -143,7 +152,7 @@ public class ssolver{
 	//check to see if puzzle is solved by checking all the boxes  a bit inefficient but balls cried the queen
 	public static boolean isSolved(int[][]puzzle){
 		for(int i = 0; i<9; i++){  //y rotation
-			for(int j = 0; j<9; j++){
+			for(int j = 0; j<8; j++){
 				if(puzzle[i][j]==0){
 					return false;
 				}
