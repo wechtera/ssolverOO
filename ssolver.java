@@ -2,7 +2,6 @@
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
 public class ssolver{
 	private static int recDepth = 0;  //recursion depth
 	private static int [][] solution = new int [9][9];  //cheating around it exitting incorectly
@@ -11,9 +10,9 @@ public class ssolver{
 		int [] [] puzzle = new int [9][9];
 		puzzle = readin();
 		printPuzzle(puzzle);
-		puzzle = solve(puzzle, 0, 0);
+		solve(puzzle);
 		System.out.println("========= SOLVED =============");
-		printPuzzle(solution);
+		printPuzzle(puzzle);
 	}
 	
 	public static void printPuzzle(int[][]puzzle){
@@ -65,55 +64,29 @@ public class ssolver{
 		
 		return puzzle;		
 	}
-	public static int[][] solve(int[][]puzzle, int x, int y){
-		System.out.println("RecrDepth:  " + recDepth);
-		recDepth++;
-		//using backtracking for brute force power of the gods(norse cause they obviously most b.a.
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		//next for both  x and y
-		int nextx = getNextx(x);
-		int nexty = getNexty(x, y);
-		while(puzzle[y][x] != 0){  //progress until blank space
-			x = nextx;
-			y = nexty;
-			if(isSolved(puzzle)){
-				System.out.println("resetting sollution improperly");
-				solution = puzzle;
-				return puzzle;
+	public static boolean solve(int[][]puzzle){
+		//using backtracking
+		for(int i = 0; i<9; i++){
+			for(int j = 0; j<9; j++){
+				if(puzzle[i][j]!=0){
+					continue;
+				}
+				for(int n = 1; n<10; n++){  //testing posabilities
+					if(isTrue(puzzle, i, j, n)){
+						puzzle[i][j] = n;
+						if(solve(puzzle))
+							return true;
+						else{
+							puzzle[i][j] = 0;  //backtrack here
+						}
+					}
+				}
+				return false; //no possibilities for the empty space
 			}
-			nextx = getNextx(x);
-			nexty = getNexty(x, y);
 		}
-		for(int i = 1; i<10; i++){
-			if(isTrue(puzzle, y, x, i))
-				list.add(i);
-		}
-		for(int i=0; i<list.size(); i++){
-			puzzle[y][x]= list.get(i);
-			if(isSolved(puzzle)){
-				System.out.println("Resetting Solution");
-				solution = puzzle;
-				return puzzle;
-			}
-			System.out.print("=");
-			puzzle = solve(puzzle, nextx, nexty);
-			puzzle[y][x] = 0;//clear spot upon backtracking THIS WAS WHAT I WAS MISSIN
-		}
-		return puzzle;
+		return true; //hits end of the puzzle
 	}		
 						
-	public static int getNextx(int x){
-		if(x==8)
-			return 0;
-		else
-			return x+1;
-	}
-	public static int getNexty(int x, int y){
-		if(x ==8)
-			return y+1;
-		else
-			return y;
-	}
 	//checks to see if an int possible in the puzzle at space [i][j] is acceptable
 	public static boolean isTrue(int [][]puzzle, int y, int x, int possible){
 		if(checkRow(puzzle, x, possible) || checkColumn(puzzle, y, possible) || checkBox(puzzle, y, x, possible))
@@ -148,16 +121,5 @@ public class ssolver{
 			}
 		}
 		return false;
-	}
-	//check to see if puzzle is solved by checking all the boxes  a bit inefficient but balls cried the queen
-	public static boolean isSolved(int[][]puzzle){
-		for(int i = 0; i<9; i++){  //y rotation
-			for(int j = 0; j<8; j++){
-				if(puzzle[i][j]==0){
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }
